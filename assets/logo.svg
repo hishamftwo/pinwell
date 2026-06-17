@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Background circle -->
+  <circle cx="512" cy="512" r="512" fill="#0D0D0D"/>
+  
+  <!-- Colorful drop shape -->
+  <defs>
+    <linearGradient id="dropGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3DD9C4"/>
+      <stop offset="30%" stop-color="#8B5CF6"/>
+      <stop offset="60%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#F0BB5C"/>
+    </linearGradient>
+    <linearGradient id="innerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1F6F64"/>
+      <stop offset="50%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#E8735C"/>
+    </linearGradient>
+    <!-- Shine/reflection -->
+    <radialGradient id="shine" cx="35%" cy="30%" r="40%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.4)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- Main drop - large, centered -->
+  <path d="M512 180 C512 180 340 420 340 580 C340 700 415 820 512 820 C609 820 684 700 684 580 C684 420 512 180 512 180Z" 
+        fill="url(#dropGrad)" />
+  
+  <!-- Inner highlight drop -->
+  <path d="M512 280 C512 280 400 450 400 570 C400 660 450 740 512 740 C574 740 624 660 624 570 C624 450 512 280 512 280Z" 
+        fill="url(#innerGrad)" opacity="0.3"/>
+  
+  <!-- Shine reflection -->
+  <ellipse cx="450" cy="480" rx="60" ry="90" fill="url(#shine)" />
+  
+  <!-- Small accent drops -->
+  <circle cx="720" cy="350" r="28" fill="#3DD9C4" opacity="0.8"/>
+  <circle cx="760" cy="420" r="16" fill="#EC4899" opacity="0.7"/>
+  <circle cx="300" cy="750" r="20" fill="#F0BB5C" opacity="0.7"/>
+  <circle cx="260" cy="680" r="12" fill="#8B5CF6" opacity="0.6"/>
+</svg>
