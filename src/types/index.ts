@@ -17,6 +17,7 @@ export interface UserProfile {
   reminderEnabled: boolean;
   reminderTime: string; // e.g. '09:00'
   weightUnit: 'lbs' | 'kg';
+  darkMode: boolean;
 }
 
 export interface AppData {

@@ -1,13 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
-import { Colors } from '../constants/theme';
+import { useTheme } from '../hooks/useTheme';
 
 interface RingCountdownProps {
   daysUntil: number;
 }
 
 export function RingCountdown({ daysUntil }: RingCountdownProps) {
+  const colors = useTheme();
   const r = 54;
   const c = 2 * Math.PI * r;
   const overdue = daysUntil < 0;
@@ -35,63 +36,33 @@ export function RingCountdown({ daysUntil }: RingCountdownProps) {
       <Svg width={140} height={140} viewBox="0 0 140 140">
         <Defs>
           <LinearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <Stop offset="0%" stopColor={Colors.teal} />
-            <Stop offset="100%" stopColor={Colors.green} />
+            <Stop offset="0%" stopColor={colors.teal} />
+            <Stop offset="100%" stopColor={colors.green} />
           </LinearGradient>
         </Defs>
+        <Circle cx={70} cy={70} r={r} fill="none" stroke={colors.border} strokeWidth={10} />
         <Circle
-          cx={70}
-          cy={70}
-          r={r}
-          fill="none"
-          stroke={Colors.border}
-          strokeWidth={10}
-        />
-        <Circle
-          cx={70}
-          cy={70}
-          r={r}
-          fill="none"
-          stroke={overdue ? Colors.coral : 'url(#ringGrad)'}
-          strokeWidth={10}
-          strokeLinecap="round"
+          cx={70} cy={70} r={r} fill="none"
+          stroke={overdue ? colors.coral : 'url(#ringGrad)'}
+          strokeWidth={10} strokeLinecap="round"
           strokeDasharray={`${c.toFixed(1)}`}
           strokeDashoffset={`${offset.toFixed(1)}`}
-          rotation={-90}
-          origin="70, 70"
+          rotation={-90} origin="70, 70"
         />
       </Svg>
       <View style={styles.textOverlay}>
-        <Text
-          style={[
-            styles.bigText,
-            { color: overdue ? Colors.coral : Colors.ink, fontSize: overdue ? 18 : 30 },
-          ]}
-        >
+        <Text style={[styles.bigText, { color: overdue ? colors.coral : colors.ink, fontSize: overdue ? 18 : 30 }]}>
           {bigText}
         </Text>
-        <Text style={styles.smallText}>{smallText}</Text>
+        <Text style={[styles.smallText, { color: colors.inkSoft }]}>{smallText}</Text>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 6,
-  },
-  textOverlay: {
-    position: 'absolute',
-    alignItems: 'center',
-  },
-  bigText: {
-    fontWeight: '800',
-  },
-  smallText: {
-    fontSize: 10.5,
-    color: Colors.inkSoft,
-    marginTop: 2,
-  },
+  container: { alignItems: 'center', justifyContent: 'center', marginVertical: 6 },
+  textOverlay: { position: 'absolute', alignItems: 'center' },
+  bigText: { fontWeight: '800' },
+  smallText: { fontSize: 10.5, marginTop: 2 },
 });

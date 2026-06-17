@@ -1,4 +1,4 @@
-export const Colors = {
+export const LightColors = {
   bgPage: '#EAF6F1',
   bgApp: '#FBFDFC',
   ink: '#1B2B29',
@@ -20,6 +20,38 @@ export const Colors = {
   card: '#FFFFFF',
   border: '#E1E8E4',
 };
+
+export const DarkColors = {
+  bgPage: '#0F1A17',
+  bgApp: '#151F1C',
+  ink: '#E8F0ED',
+  inkSoft: '#9BABA5',
+  teal: '#3DD9C4',
+  tealLight: '#1A3530',
+  coral: '#F28B76',
+  coralLight: '#3D2220',
+  amber: '#F0BB5C',
+  amberLight: '#3D3018',
+  green: '#4CE68E',
+  greenLight: '#1A3525',
+  violet: '#A78BFA',
+  violetLight: '#2D2450',
+  pink: '#F472B6',
+  pinkLight: '#3D1A30',
+  blue: '#60A5FA',
+  blueLight: '#1A2840',
+  card: '#1C2A26',
+  border: '#2D3D38',
+};
+
+// Default export for backward compatibility
+export const Colors = LightColors;
+
+export type ThemeColors = typeof LightColors;
+
+export function getColors(darkMode: boolean): ThemeColors {
+  return darkMode ? DarkColors : LightColors;
+}
 
 export const FontSizes = {
   xs: 10.5,
