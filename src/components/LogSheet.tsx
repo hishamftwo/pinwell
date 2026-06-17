@@ -128,8 +128,8 @@ export function LogSheet({ visible, onClose, onSuccess }: LogSheetProps) {
 
 const styles = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: 'rgba(15, 25, 22, 0.4)', justifyContent: 'flex-end' },
-  sheetWrapper: { flex: 1, justifyContent: 'flex-end' },
-  sheet: { borderTopLeftRadius: 22, borderTopRightRadius: 22, padding: 20, paddingBottom: 60, maxHeight: '90%' },
+  sheetWrapper: { justifyContent: 'flex-end' },
+  sheet: { borderTopLeftRadius: 22, borderTopRightRadius: 22, padding: 20, paddingBottom: 40 },
   handle: { width: 36, height: 4, borderRadius: 3, alignSelf: 'center', marginBottom: 14 },
   scrollContent: { paddingBottom: 40 },
   choiceRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderWidth: 1, borderRadius: 14, marginBottom: 10 },
