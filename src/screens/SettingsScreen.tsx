@@ -18,6 +18,10 @@ export default function SettingsScreen() {
   const [feedbackText, setFeedbackText] = useState('');
   const [goalWeightVisible, setGoalWeightVisible] = useState(false);
   const [goalWeightInput, setGoalWeightInput] = useState(String(data.profile.goalWeight || ''));
+  const [reminderTimeVisible, setReminderTimeVisible] = useState(false);
+  const [reminderTimeInput, setReminderTimeInput] = useState(data.profile.reminderTime || '09:00');
+  const [cloudBackupVisible, setCloudBackupVisible] = useState(false);
+  const [widgetInfoVisible, setWidgetInfoVisible] = useState(false);
 
   const toggleReminder = () => updateProfile({ reminderEnabled: !data.profile.reminderEnabled });
   const toggleDarkMode = () => updateProfile({ darkMode: !data.profile.darkMode });
@@ -32,6 +36,15 @@ export default function SettingsScreen() {
     }
     updateProfile({ goalWeight: val });
     setGoalWeightVisible(false);
+  };
+
+  const handleSaveReminderTime = () => {
+    updateProfile({ reminderTime: reminderTimeInput });
+    setReminderTimeVisible(false);
+  };
+
+  const handleCloudOption = (option: string) => {
+    Alert.alert('Coming Soon', `${option} cloud backup will be available in a future update.`);
   };
 
   const handleExportCSV = async () => {
@@ -96,10 +109,10 @@ export default function SettingsScreen() {
         <Toggle value={data.profile.reminderEnabled} onPress={toggleReminder} />
       </View>
 
-      <View style={[styles.row, { borderBottomColor: colors.border }]}>
+      <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={() => setReminderTimeVisible(true)}>
         <Text style={[styles.rowLabel, { color: colors.ink }]}>Reminder time</Text>
-        <View style={styles.rowRight}><Text style={[styles.rowValue, { color: colors.inkSoft }]}>9:00 AM</Text><ChevronIcon /></View>
-      </View>
+        <View style={styles.rowRight}><Text style={[styles.rowValue, { color: colors.inkSoft }]}>{data.profile.reminderTime || '9:00 AM'}</Text><ChevronIcon /></View>
+      </TouchableOpacity>
 
       <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={toggleWeightUnit}>
         <Text style={[styles.rowLabel, { color: colors.ink }]}>Weight units</Text>
@@ -123,6 +136,16 @@ export default function SettingsScreen() {
 
       <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={() => setExportVisible(true)}>
         <Text style={[styles.rowLabel, { color: colors.ink }]}>Export my data</Text>
+        <View style={styles.rowRight}><ChevronIcon /></View>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={() => setCloudBackupVisible(true)}>
+        <Text style={[styles.rowLabel, { color: colors.ink }]}>Cloud backup</Text>
+        <View style={styles.rowRight}><Text style={[styles.rowValue, { color: colors.inkSoft }]}>Not set up</Text><ChevronIcon /></View>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={() => setWidgetInfoVisible(true)}>
+        <Text style={[styles.rowLabel, { color: colors.ink }]}>Home screen widget</Text>
         <View style={styles.rowRight}><ChevronIcon /></View>
       </TouchableOpacity>
 
@@ -191,6 +214,83 @@ export default function SettingsScreen() {
             </Text>
             <TouchableOpacity style={[styles.feedbackBtn, { backgroundColor: colors.teal }]} onPress={() => { setAboutVisible(false); setFeedbackVisible(true); }}>
               <Text style={styles.feedbackBtnText}>Send Feedback / Suggest Features</Text>
+            </TouchableOpacity>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      {/* Reminder Time Modal */}
+      <Modal visible={reminderTimeVisible} transparent animationType="slide" onRequestClose={() => setReminderTimeVisible(false)}>
+        <Pressable style={styles.modalOverlay} onPress={() => setReminderTimeVisible(false)}>
+          <Pressable style={[styles.modalSheet, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
+            <View style={[styles.handle, { backgroundColor: colors.border }]} />
+            <Text style={[styles.modalTitle, { color: colors.ink }]}>Set Reminder Time</Text>
+            <Text style={[styles.aboutText, { color: colors.inkSoft }]}>When should we remind you about your weekly dose?</Text>
+            <TextInput
+              style={[styles.feedbackInput, { borderColor: colors.border, color: colors.ink, minHeight: 50 }]}
+              value={reminderTimeInput}
+              onChangeText={setReminderTimeInput}
+              placeholder="e.g. 09:00"
+              placeholderTextColor={colors.inkSoft}
+            />
+            <TouchableOpacity style={[styles.feedbackBtn, { backgroundColor: colors.teal }]} onPress={handleSaveReminderTime}>
+              <Text style={styles.feedbackBtnText}>Save</Text>
+            </TouchableOpacity>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      {/* Cloud Backup Modal */}
+      <Modal visible={cloudBackupVisible} transparent animationType="slide" onRequestClose={() => setCloudBackupVisible(false)}>
+        <Pressable style={styles.modalOverlay} onPress={() => setCloudBackupVisible(false)}>
+          <Pressable style={[styles.modalSheet, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
+            <View style={[styles.handle, { backgroundColor: colors.border }]} />
+            <Text style={[styles.modalTitle, { color: colors.ink }]}>Cloud Backup</Text>
+            <Text style={[styles.aboutText, { color: colors.inkSoft }]}>
+              Keep your data safe! If you change phones or reinstall, you can restore everything.
+            </Text>
+            <TouchableOpacity style={[styles.exportOption, { borderColor: colors.border }]} onPress={() => handleCloudOption('Google Drive')}>
+              <Text style={[styles.exportText, { color: colors.ink }]}>Google Drive</Text>
+              <Text style={[styles.exportSub, { color: colors.inkSoft }]}>Coming soon</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.exportOption, { borderColor: colors.border }]} onPress={() => handleCloudOption('iCloud')}>
+              <Text style={[styles.exportText, { color: colors.ink }]}>iCloud</Text>
+              <Text style={[styles.exportSub, { color: colors.inkSoft }]}>Coming soon</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.exportOption, { borderColor: colors.border }]} onPress={() => handleCloudOption('OneDrive')}>
+              <Text style={[styles.exportText, { color: colors.ink }]}>OneDrive</Text>
+              <Text style={[styles.exportSub, { color: colors.inkSoft }]}>Coming soon</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.exportOption, { borderColor: colors.border }]} onPress={() => handleCloudOption('Dropbox')}>
+              <Text style={[styles.exportText, { color: colors.ink }]}>Dropbox</Text>
+              <Text style={[styles.exportSub, { color: colors.inkSoft }]}>Coming soon</Text>
+            </TouchableOpacity>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      {/* Widget Info Modal */}
+      <Modal visible={widgetInfoVisible} transparent animationType="slide" onRequestClose={() => setWidgetInfoVisible(false)}>
+        <Pressable style={styles.modalOverlay} onPress={() => setWidgetInfoVisible(false)}>
+          <Pressable style={[styles.modalSheet, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
+            <View style={[styles.handle, { backgroundColor: colors.border }]} />
+            <Text style={[styles.modalTitle, { color: colors.ink }]}>Home Screen Widget</Text>
+            <Text style={[styles.aboutText, { color: colors.inkSoft }]}>
+              Add a 1x2 widget to your home screen for quick access to log a dose or weight — without even opening the app!
+            </Text>
+            <View style={[styles.widgetPreview, { backgroundColor: colors.tealLight, borderColor: colors.teal }]}>
+              <View style={styles.widgetRow}>
+                <View style={[styles.widgetBtn, { backgroundColor: colors.teal }]}>
+                  <Text style={styles.widgetBtnText}>+ Dose</Text>
+                </View>
+                <View style={[styles.widgetBtn, { backgroundColor: colors.amber }]}>
+                  <Text style={styles.widgetBtnText}>+ Weight</Text>
+                </View>
+              </View>
+              <Text style={[styles.widgetCaption, { color: colors.inkSoft }]}>Widget preview (1x2)</Text>
+            </View>
+            <TouchableOpacity style={[styles.feedbackBtn, { backgroundColor: colors.teal, opacity: 0.5 }]} disabled>
+              <Text style={styles.feedbackBtnText}>Coming Soon</Text>
             </TouchableOpacity>
           </Pressable>
         </Pressable>
@@ -290,4 +390,9 @@ const styles = StyleSheet.create({
   donationTitle: { fontSize: 16, fontWeight: '700', marginBottom: 8 },
   donationBtn: { borderRadius: 12, padding: 14, alignItems: 'center', marginTop: 8 },
   donationBtnText: { color: '#fff', fontWeight: '600', fontSize: 14 },
+  widgetPreview: { borderWidth: 1, borderRadius: 14, padding: 16, marginBottom: 16, alignItems: 'center' },
+  widgetRow: { flexDirection: 'row', gap: 12, marginBottom: 8 },
+  widgetBtn: { paddingHorizontal: 20, paddingVertical: 14, borderRadius: 10 },
+  widgetBtnText: { color: '#fff', fontWeight: '700', fontSize: 13 },
+  widgetCaption: { fontSize: 11, marginTop: 4 },
 });
