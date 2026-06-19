@@ -16,11 +16,23 @@ export default function SettingsScreen() {
   const [aboutVisible, setAboutVisible] = useState(false);
   const [feedbackVisible, setFeedbackVisible] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
+  const [goalWeightVisible, setGoalWeightVisible] = useState(false);
+  const [goalWeightInput, setGoalWeightInput] = useState(String(data.profile.goalWeight || ''));
 
   const toggleReminder = () => updateProfile({ reminderEnabled: !data.profile.reminderEnabled });
   const toggleDarkMode = () => updateProfile({ darkMode: !data.profile.darkMode });
   const toggleWeightUnit = () => updateProfile({ weightUnit: data.profile.weightUnit === 'lbs' ? 'kg' : 'lbs' });
   const toggleHeightUnit = () => updateProfile({ heightUnit: data.profile.heightUnit === 'cm' ? 'in' : 'cm' });
+
+  const handleSaveGoalWeight = () => {
+    const val = parseFloat(goalWeightInput);
+    if (!val || isNaN(val) || val <= 0) {
+      Alert.alert('Invalid', 'Please enter a valid weight.');
+      return;
+    }
+    updateProfile({ goalWeight: val });
+    setGoalWeightVisible(false);
+  };
 
   const handleExportCSV = async () => {
     try {
@@ -51,6 +63,10 @@ export default function SettingsScreen() {
     Alert.alert('Thank you!', 'Your feedback has been received. We appreciate you helping us improve Pinwell!');
     setFeedbackText('');
     setFeedbackVisible(false);
+  };
+
+  const handleDonation = (platform: string) => {
+    Alert.alert('Coming Soon', `${platform} donations will be available in a future update. Thank you for wanting to support Pinwell!`);
   };
 
   const ChevronIcon = () => (
@@ -100,10 +116,10 @@ export default function SettingsScreen() {
         <View style={styles.rowRight}><Text style={[styles.rowValue, { color: colors.inkSoft }]}>{data.profile.startWeight || 'Not set'} {data.profile.startWeight ? data.profile.weightUnit : ''}</Text><ChevronIcon /></View>
       </View>
 
-      <View style={[styles.row, { borderBottomColor: colors.border }]}>
+      <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={() => { setGoalWeightInput(String(data.profile.goalWeight || '')); setGoalWeightVisible(true); }}>
         <Text style={[styles.rowLabel, { color: colors.ink }]}>Goal weight</Text>
         <View style={styles.rowRight}><Text style={[styles.rowValue, { color: colors.inkSoft }]}>{data.profile.goalWeight || 'Not set'} {data.profile.goalWeight ? data.profile.weightUnit : ''}</Text><ChevronIcon /></View>
-      </View>
+      </TouchableOpacity>
 
       <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={() => setExportVisible(true)}>
         <Text style={[styles.rowLabel, { color: colors.ink }]}>Export my data</Text>
@@ -180,6 +196,28 @@ export default function SettingsScreen() {
         </Pressable>
       </Modal>
 
+      {/* Goal Weight Modal */}
+      <Modal visible={goalWeightVisible} transparent animationType="slide" onRequestClose={() => setGoalWeightVisible(false)}>
+        <Pressable style={styles.modalOverlay} onPress={() => setGoalWeightVisible(false)}>
+          <Pressable style={[styles.modalSheet, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
+            <View style={[styles.handle, { backgroundColor: colors.border }]} />
+            <Text style={[styles.modalTitle, { color: colors.ink }]}>Set Goal Weight</Text>
+            <Text style={[styles.aboutText, { color: colors.inkSoft }]}>What's your target weight? You can change this anytime.</Text>
+            <TextInput
+              style={[styles.feedbackInput, { borderColor: colors.border, color: colors.ink, minHeight: 50 }]}
+              value={goalWeightInput}
+              onChangeText={setGoalWeightInput}
+              placeholder={`e.g. 180 (${data.profile.weightUnit})`}
+              placeholderTextColor={colors.inkSoft}
+              keyboardType="decimal-pad"
+            />
+            <TouchableOpacity style={[styles.feedbackBtn, { backgroundColor: colors.teal }]} onPress={handleSaveGoalWeight}>
+              <Text style={styles.feedbackBtnText}>Save</Text>
+            </TouchableOpacity>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
       {/* Feedback Modal */}
       <Modal visible={feedbackVisible} transparent animationType="slide" onRequestClose={() => setFeedbackVisible(false)}>
         <Pressable style={styles.modalOverlay} onPress={() => setFeedbackVisible(false)}>
@@ -202,6 +240,22 @@ export default function SettingsScreen() {
             <TouchableOpacity style={[styles.feedbackBtn, { backgroundColor: colors.teal }]} onPress={handleSendFeedback}>
               <Text style={styles.feedbackBtnText}>Send</Text>
             </TouchableOpacity>
+
+            <View style={[styles.donationSection, { borderTopColor: colors.border }]}>
+              <Text style={[styles.donationTitle, { color: colors.ink }]}>Buy Me a Coffee</Text>
+              <Text style={[styles.aboutText, { color: colors.inkSoft }]}>
+                Love Pinwell? Help keep it free and ad-free by buying me a coffee!
+              </Text>
+              <TouchableOpacity style={[styles.donationBtn, { backgroundColor: colors.amber }]} onPress={() => handleDonation('PayPal')}>
+                <Text style={styles.donationBtnText}>PayPal</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.donationBtn, { backgroundColor: colors.violet }]} onPress={() => handleDonation('Ko-fi')}>
+                <Text style={styles.donationBtnText}>Ko-fi</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.donationBtn, { backgroundColor: colors.pink }]} onPress={() => handleDonation('Buy Me a Coffee')}>
+                <Text style={styles.donationBtnText}>Buy Me a Coffee</Text>
+              </TouchableOpacity>
+            </View>
           </Pressable>
         </Pressable>
       </Modal>
@@ -232,4 +286,8 @@ const styles = StyleSheet.create({
   feedbackBtn: { borderRadius: 24, padding: 14, alignItems: 'center', marginTop: 10 },
   feedbackBtnText: { color: '#fff', fontWeight: '600', fontSize: 14 },
   feedbackInput: { borderWidth: 1, borderRadius: 12, padding: 14, fontSize: 14, minHeight: 120, marginBottom: 10 },
+  donationSection: { borderTopWidth: 1, marginTop: 20, paddingTop: 20 },
+  donationTitle: { fontSize: 16, fontWeight: '700', marginBottom: 8 },
+  donationBtn: { borderRadius: 12, padding: 14, alignItems: 'center', marginTop: 8 },
+  donationBtnText: { color: '#fff', fontWeight: '600', fontSize: 14 },
 });
